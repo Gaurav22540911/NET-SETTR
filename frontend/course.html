@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Details | NET-SETTR</title>
+  <link rel="stylesheet" href="course.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo" onclick="window.location.href='index.html'">
+      <img src="logo.png" alt="NET-SETTR Logo" />
+      <span>NET-SETTR</span>
+    </div>
+  </nav>
+
+  <!-- Course Details Section -->
+  <section class="course-detail">
+    <div class="left-section">
+      <h1 id="course-title">Course Title</h1>
+      <p id="course-desc">Course Description...</p>
+    </div>
+
+    <div class="right-section">
+      <img id="course-image" alt="Course Image" />
+      <button id="buy-btn">Buy Now</button>
+    </div>
+  </section>
+
+  <!-- Razorpay SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="course.js"></script>
+</body>
+</html>

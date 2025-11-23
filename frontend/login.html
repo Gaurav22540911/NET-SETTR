@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login | NET-SETTR</title>
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo" onclick="window.location.href='index.html'">
+      <img src="logo.png" alt="NET-SETTR" />
+      <span>NET-SETTR</span>
+    </div>
+  </nav>
+
+  <div class="login-container">
+    <div class="login-box">
+      <h1>Welcome back</h1>
+
+      <form id="login-form" autocomplete="on">
+        <div class="form-group">
+          <label for="loginId">Email or Phone</label>
+          <input type="text" id="loginId" name="loginId" placeholder="you@example.com or 9876543210" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Your password" required minlength="8" />
+        </div>
+
+        <button type="submit" id="login-btn">Login</button>
+
+        <p class="helper">
+          New here? <a href="signup.html">Create an account</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>
