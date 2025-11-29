@@ -1,110 +1,137 @@
-// Parse URL parameters
-const params = new URLSearchParams(window.location.search);
-const name = params.get('name');
-const desc = params.get('desc');
-const img = params.get('img');
-const amount = params.get('amount');
+//-------------------------------------
+// NAVBAR LOGIN / LOGOUT HANDLING
+//-------------------------------------
+function updateNavbar() {
+  const menu = document.getElementById("navbarMenu");
+  const user = localStorage.getItem("userLogin");
 
-// Fill in course info
-document.getElementById('course-title').textContent = name || "Course Title";
-document.getElementById('course-desc').textContent = desc || "Course Description";
-document.getElementById('course-image').src = img || "placeholder.png";
+  if (user) {
+    menu.innerHTML = `
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#" id="logoutBtn">Logout</a></li>
+    `;
 
-// 🧾 Format price
-let formattedAmount = "Price not available";
-if (amount && !isNaN(amount)) {
-  formattedAmount = `₹${Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("userLogin");
+      alert("Logged out successfully");
+      location.href = "index.html";
+    });
+
+  } else {
+    menu.innerHTML = `
+      <li><a href="index.html">Home</a></li>
+      <li><a href="signup.html" class="signup-btn">Sign Up</a></li>
+      <li><a href="login.html" class="login-btn">Login</a></li>
+    `;
+  }
+}
+updateNavbar();
+
+
+//-------------------------------------
+// LOGO CLICK → HOME PAGE
+//-------------------------------------
+document.getElementById("logoClick").addEventListener("click", () => {
+  window.location.href = "index.html";
+});
+
+
+//-------------------------------------
+// LOADER (SHOW / HIDE)
+//-------------------------------------
+function showLoader() {
+  document.getElementById("loader").classList.remove("hidden");
+}
+function hideLoader() {
+  document.getElementById("loader").classList.add("hidden");
 }
 
-// ✅ Create and insert price element (below image, above button)
-const priceElement = document.createElement('div');
-priceElement.classList.add('price');
-priceElement.textContent = formattedAmount;
 
-const rightSection = document.querySelector('.right-section');
-const buyButton = document.getElementById('buy-btn');
-rightSection.insertBefore(priceElement, buyButton);
+//-------------------------------------
+// LOAD COURSE DETAILS FROM URL PARAMS
+//-------------------------------------
+showLoader();
 
-// ✅ Keep button label clean
-buyButton.textContent = "Buy Now";
+const params = new URLSearchParams(window.location.search);
 
-// 🧾 Handle Buy Now click
-buyButton.addEventListener('click', async () => {
+const courseName = params.get("name");
+const courseDesc = params.get("desc");
+const courseImg = params.get("img");
+const courseAmount = params.get("amount");
+
+document.getElementById("course-title").textContent = courseName;
+document.getElementById("course-desc").textContent = courseDesc;
+document.getElementById("course-image").src = courseImg;
+
+document.getElementById("price-box").innerHTML =
+  `<div class="price">₹${Number(courseAmount).toLocaleString("en-IN")}</div>`;
+
+hideLoader();
+
+
+//-------------------------------------
+// BUY NOW → RAZORPAY PAYMENT
+//-------------------------------------
+document.getElementById("buy-btn").addEventListener("click", async () => {
+  showLoader();
+
   try {
-    const amountInRupees = Number(amount);
-    if (isNaN(amountInRupees)) {
-      alert("Invalid amount for this course.");
-      return;
-    }
-
-    // Step 1: Create Razorpay order from backend
     const response = await fetch("http://localhost:8080/api/payments/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        amount: amountInRupees,
+        amount: Number(courseAmount),
         currency: "INR",
-        receipt: `course_${name}_${Date.now()}`
+        receipt: `order_${Date.now()}`
       })
     });
 
-    const orderData = await response.json();
-    if (!orderData.orderId) {
-      alert("Failed to create Razorpay order. Please try again.");
+    const order = await response.json();
+
+    if (!order.orderId) {
+      alert("Failed to create payment order.");
+      hideLoader();
       return;
     }
 
-    // Step 2: Configure Razorpay Checkout
     const options = {
-      key: "rzp_test_RdAIlDO8yCtH5V", // your Razorpay test key
-      amount: orderData.amount, // in paise
-      currency: orderData.currency,
+      key: "rzp_test_RdAIlDO8yCtH5V",
+      amount: order.amount,
+      currency: "INR",
+      order_id: order.orderId,
+
       name: "NET-SETTR",
-      description: `Purchase - ${name}`,
+      description: courseName,
       image: "logo.png",
-      order_id: orderData.orderId,
+
       prefill: {
-        name: "Test User", // dynamically replace with actual user
-        contact: "9876543210"
+        name: localStorage.getItem("userLogin") || "Guest User"
       },
-      theme: { color: "#20232a" },
 
-      // Success Handler
-      handler: async function (response) {
-        alert("✅ Payment Successful!");
-        console.log(response);
+      handler: function () {
+        alert("Payment Successful!");
 
-        // Step 3: Verify payment and save to DB
-        await fetch("http://localhost:8080/api/payments/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            phone_no: "9876543210", // replace with logged-in user phone
-            course_id: "1", // replace dynamically if you have real ID
-            amount: amountInRupees
-          })
-        });
-
-        // Optional: Redirect to thank-you page
+        // Optional redirect
         window.location.href = "thankyou.html";
       },
 
       modal: {
         ondismiss: function () {
-          console.log("Payment cancelled by user.");
+          console.log("Payment window closed.");
         }
+      },
+
+      theme: {
+        color: "#1f2937"
       }
     };
 
-    // Step 4: Open Razorpay checkout
-    const rzp = new Razorpay(options);
-    rzp.open();
+    hideLoader();
+    new Razorpay(options).open();
 
   } catch (error) {
-    console.error("Error in Buy Now:", error);
+    console.error("Payment Error:", error);
+    hideLoader();
     alert("Something went wrong. Please try again.");
   }
 });

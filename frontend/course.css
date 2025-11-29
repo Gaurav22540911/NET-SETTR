@@ -1,100 +1,225 @@
+/* ============================
+   GLOBAL RESET
+============================ */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f7f7f7;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f3f4f6;
 }
 
-/* Navbar */
+/* ============================
+   NAVBAR (IDENTICAL TO HOME PAGE)
+============================ */
 .navbar {
-  background-color: #20232a;
+  background-color: #1f2937;
   color: white;
+  padding: 14px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 40px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+  position: sticky;
+  top: 0;
+  z-index: 200;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
   cursor: pointer;
+  gap: 10px;
 }
 
 .logo img {
-  height: 40px;
-  width: 40px;
-  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
 }
 
-/* Course Details */
-.course-detail {
+.menu {
+  list-style: none;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 50px;
-  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.25s ease-in-out;
+}
+
+/* SIGN UP BUTTON — Dark */
+.signup-btn {
+  background: #111827;
+  border: 2px solid transparent;
+}
+
+.signup-btn:hover {
+  background: #000;
+}
+
+/* LOGIN + LOGOUT — Frosted Glass */
+.login-btn,
+.logout-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.4);
+  backdrop-filter: blur(8px);
+}
+
+.login-btn:hover,
+.logout-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* MOBILE NAVBAR FIX */
+@media (max-width: 600px) {
+  .menu {
+    gap: 10px;
+  }
+
+  .menu a {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .navbar {
+    padding: 12px 20px;
+  }
+
+  .logo img {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* ============================
+   TWO-COLUMN COURSE LAYOUT
+============================ */
+.course-card {
+  max-width: 1000px;
+  margin: 60px auto;
+  background: white;
+  padding: 40px;
+  border-radius: 14px;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 40px;
 }
 
-.left-section {
-  flex: 1;
-  min-width: 280px;
+/* LEFT SECTION — TEXT */
+.course-left {
+  flex: 1.2;
+  text-align: left;
 }
 
-.left-section h1 {
+#course-title {
   font-size: 32px;
-  margin-bottom: 20px;
-  color: #20232a;
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 15px;
 }
 
-.left-section p {
-  font-size: 18px;
-  color: #333;
+#course-desc {
+  font-size: 17px;
+  color: #374151;
   line-height: 1.6;
+  margin-bottom: 20px;
 }
 
-.right-section {
+/* RIGHT SECTION — IMAGE */
+.course-right {
   flex: 1;
   text-align: center;
 }
 
-.right-section img {
+.course-img {
   width: 100%;
-  max-width: 400px;
-  height: auto;
+  max-width: 380px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  margin-bottom: 15px;
 }
 
 .price {
   font-size: 24px;
   font-weight: bold;
-  color: #20232a;
-  margin: 20px 0;
+  color: #065f46;
+  margin-bottom: 15px;
 }
 
-/* Button */
+/* BUY BUTTON */
 #buy-btn {
-  background-color: #20232a;
+  background-color: #1f2937;
   color: white;
   border: none;
   padding: 14px 40px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 18px;
   cursor: pointer;
-  transition: background 0.3s ease;
-  width: 80%;
-  max-width: 300px;
+  width: 100%;
+  max-width: 280px;
+  transition: 0.3s ease;
 }
 
 #buy-btn:hover {
-  background-color: #444;
+  background: #374151;
 }
 
+/* MOBILE VIEW (STACKED) */
 @media (max-width: 768px) {
-  .course-detail {
+  .course-card {
     flex-direction: column;
-    padding: 20px;
+    text-align: center;
   }
+
+  .course-left {
+    text-align: center;
+  }
+
+  .course-img {
+    max-width: 320px;
+  }
+}
+
+/* ============================
+   LOADER (MATCH HOME PAGE)
+============================ */
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(3px);
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader.hidden {
+  display: none;
+}
+
+.spinner {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 8px solid #ddd;
+  border-top: 8px solid #6366f1;
+  border-right: 8px solid #ef4444;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

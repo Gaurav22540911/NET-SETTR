@@ -7,28 +7,37 @@
   <link rel="stylesheet" href="course.css" />
 </head>
 <body>
-  <!-- Navbar -->
+
+  <!-- NAVBAR -->
   <nav class="navbar">
-    <div class="logo" onclick="window.location.href='index.html'">
+    <div class="logo" id="logoClick">
       <img src="logo.png" alt="NET-SETTR Logo" />
       <span>NET-SETTR</span>
     </div>
+    <ul class="menu" id="navbarMenu"></ul>
   </nav>
 
-  <!-- Course Details Section -->
-  <section class="course-detail">
-    <div class="left-section">
-      <h1 id="course-title">Course Title</h1>
-      <p id="course-desc">Course Description...</p>
-    </div>
+  <!-- LOADER -->
+  <div id="loader" class="loader hidden">
+    <div class="spinner"></div>
+  </div>
 
-    <div class="right-section">
-      <img id="course-image" alt="Course Image" />
-      <button id="buy-btn">Buy Now</button>
-    </div>
-  </section>
+  <!-- Centered Course Card -->
+  <section class="course-card">
 
-  <!-- Razorpay SDK -->
+  <div class="course-left">
+    <h1 id="course-title"></h1>
+    <p id="course-desc"></p>
+  </div>
+
+  <div class="course-right">
+    <img id="course-image" class="course-img" />
+    <div id="price-box"></div>
+    <button id="buy-btn">Buy Now</button>
+  </div>
+
+</section>
+
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="course.js"></script>
 </body>
