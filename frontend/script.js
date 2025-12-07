@@ -5,23 +5,28 @@ function updateNavbar() {
   const menu = document.getElementById("navbarMenu");
   const user = localStorage.getItem("userLogin");
 
-  if (user) {
-    menu.innerHTML = `
-      <li><a href="#" id="logoutBtn">Logout</a></li>
-    `;
+  menu.innerHTML = `
+    <li class="dropdown">
+      <a href="#" class="menu-link">Courses ▼</a>
+      <ul class="dropdown-menu" id="courseDropdown"></ul>
+    </li>
+    ${
+      user
+        ? `<li><a href="#" id="logoutBtn">Logout</a></li>`
+        : `<li><a href="signup.html" class="signup-btn">Sign Up</a></li>
+           <li><a href="login.html" class="login-btn">Login</a></li>`
+    }
+  `;
 
+  if (user) {
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("userLogin");
       alert("Logged out successfully");
-      location.reload();
+      window.location.href = "index.html";
     });
-
-  } else {
-    menu.innerHTML = `
-      <li><a href="signup.html">Sign Up</a></li>
-      <li><a href="login.html">Login</a></li>
-    `;
   }
+
+  loadCourseTypes(); // load dropdown after menu rendered
 }
 updateNavbar();
 
@@ -50,13 +55,21 @@ function hideLoader() {
 
 
 //-------------------------------------
-// FETCH & RENDER COURSES
+// FETCH & RENDER COURSES (with filtering by type)
 //-------------------------------------
 async function loadCourses() {
   showLoader();
 
+  const params = new URLSearchParams(window.location.search);
+  const type = params.get("type");
+
+  let url = "http://localhost:8080/api/courses";
+  if (type) {
+    url += `?type=${type}`;
+  }
+
   try {
-    const response = await fetch("http://localhost:8080/api/courses");
+    const response = await fetch(url);
     const courses = await response.json();
 
     const coursesHTML = `
@@ -65,21 +78,17 @@ async function loadCourses() {
           .map(
             course => `
           <div class="course"
-               data-name="${course.course_name}"
+               data-name="${course.courseName}"
                data-description="${course.course_description}"
                data-image="${course.image_url}"
                data-amount="${course.amount}">
-
-            <img src="${course.image_url}" alt="${course.course_name}" />
-
-            <h3>${course.course_name}</h3>
+            <img src="${course.image_url}" alt="${course.courseName}" />
+            <h3>${course.courseName}</h3>
             <p>${course.course_description}</p>
-
-            <span class="price">
-              ₹${Number(course.amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-            </span>
-          </div>
-        `
+            <span class="price">₹${Number(course.amount).toLocaleString("en-IN", {
+              minimumFractionDigits: 2
+            })}</span>
+          </div>`
           )
           .join("")}
       </div>
@@ -100,12 +109,11 @@ async function loadCourses() {
 
 
 //-------------------------------------
-// LOGO CLICK → Reload Only Courses
+// LOGO CLICK → Home load
 //-------------------------------------
 if (logoClick) {
   logoClick.addEventListener("click", () => {
-    window.scrollTo(0, 0);
-    loadCourses();
+    window.location = "index.html";
   });
 }
 
@@ -119,7 +127,6 @@ function setupCourseHover() {
       clearTimeout(hideTimeout);
 
       const rect = course.getBoundingClientRect();
-
       popup.innerHTML = `
         <strong>${course.dataset.name}</strong>
         <p>${course.dataset.description}</p>
@@ -138,14 +145,6 @@ function setupCourseHover() {
         setTimeout(() => (popup.style.display = "none"), 200);
       }, 250);
     });
-  });
-
-  popup.addEventListener("mouseenter", () => clearTimeout(hideTimeout));
-  popup.addEventListener("mouseleave", () => {
-    hideTimeout = setTimeout(() => {
-      popup.classList.remove("show");
-      setTimeout(() => (popup.style.display = "none"), 200);
-    }, 250);
   });
 }
 
@@ -168,6 +167,25 @@ function setupCourseClick() {
 
 
 //-------------------------------------
-// INITIAL LOAD (🔥 FIXED)
+// LOAD COURSE TYPES FOR DROPDOWN
+//-------------------------------------
+async function loadCourseTypes() {
+  try {
+    const response = await fetch("http://localhost:8080/api/courses/types");
+    const types = await response.json();
+
+    const dropdown = document.getElementById("courseDropdown");
+    dropdown.innerHTML = types
+      .map(type => `<li><a href="index.html?type=${encodeURIComponent(type)}">${type}</a></li>`)
+      .join("");
+
+  } catch (error) {
+    console.error("Error loading course types:", error);
+  }
+}
+
+
+//-------------------------------------
+// INITIAL LOAD
 //-------------------------------------
 window.onload = loadCourses;

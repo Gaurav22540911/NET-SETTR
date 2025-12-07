@@ -18,7 +18,15 @@ public class CourseController {
     }
 
     @GetMapping
-    public List<Course> getCourses() {
+    public List<Course> getCourses(@RequestParam(required = false) String type) {
+        if (type != null && !type.isEmpty()) {
+            return courseService.getCoursesByType(type);
+        }
         return courseService.getAllCourses();
+    }
+
+    @GetMapping("/types")
+    public List<String> getCourseTypes() {
+        return courseService.getCourseTypes();
     }
 }

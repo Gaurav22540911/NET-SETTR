@@ -29,7 +29,14 @@ public class User {
 
     private LocalDateTime lastLogin;
 
+    // Added for Single Device Login
+    private String activeDeviceId;
+
+    private LocalDateTime lastDeviceLoginAt;
+
+    // =============================
     // Getters & Setters
+    // =============================
 
     public Long getUserId() {
         return userId;
@@ -93,5 +100,21 @@ public class User {
 
     public void setLastLogin(LocalDateTime lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public String getActiveDeviceId() {
+        return activeDeviceId;
+    }
+
+    public void setActiveDeviceId(String activeDeviceId) {
+        this.activeDeviceId = activeDeviceId;
+    }
+
+    public LocalDateTime getLastDeviceLoginAt() {
+        return lastDeviceLoginAt;
+    }
+
+    public void setLastDeviceLoginAt(LocalDateTime lastDeviceLoginAt) {
+        this.lastDeviceLoginAt = lastDeviceLoginAt;
     }
 }

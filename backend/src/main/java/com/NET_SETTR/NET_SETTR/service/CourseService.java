@@ -19,4 +19,12 @@ public class CourseService {
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
     }
+
+    public List<String> getCourseTypes() {
+        return courseRepository.findDistinctCourseTypes();
+    }
+
+    public List<Course> getCoursesByType(String type) {
+        return courseRepository.findByCourseType(type);
+    }
 }

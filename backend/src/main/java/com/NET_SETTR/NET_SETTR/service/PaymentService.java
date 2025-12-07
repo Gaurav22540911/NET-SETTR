@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class PaymentService {
 
@@ -26,7 +28,7 @@ public class PaymentService {
         RazorpayClient razorpay = new RazorpayClient(keyId, keySecret);
 
         JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", amount * 100); // convert to paise
+        orderRequest.put("amount", amount * 100);
         orderRequest.put("currency", currency);
         orderRequest.put("receipt", receipt);
 
@@ -34,21 +36,29 @@ public class PaymentService {
     }
 
     public boolean verifySignature(String orderId, String paymentId, String signature) throws Exception {
-        String data = orderId + "|" + paymentId;
-        return Utils.verifySignature(data, signature, keySecret);
+        String payload = orderId + "|" + paymentId;
+        return Utils.verifySignature(payload, signature, keySecret);
     }
 
+    public Payment savePayment(String orderId, String paymentId, String signature,
+                               Long userId, String phoneNo,
+                               Integer courseId, double amount, String status) {
 
-    public void savePayment(String orderId, String paymentId, String signature, String phoneNo, String courseId, double amount) {
         Payment payment = new Payment();
         payment.setPaymentId(paymentId);
         payment.setOrderId(orderId);
+        payment.setUserId(userId);
         payment.setPhoneNo(phoneNo);
-        payment.setCourseId(Integer.parseInt(courseId));
+        payment.setCourseId(courseId);
         payment.setAmount(amount);
         payment.setCurrency("INR");
-        payment.setStatus("paid");
+        payment.setPaymentMethod("UPI");
+        payment.setStatus(status);
         payment.setRazorpaySignature(signature);
-        paymentRepository.save(payment);
+        payment.setCreatedAt(LocalDateTime.now());
+
+        return paymentRepository.save(payment);
     }
+
+
 }

@@ -407,3 +407,30 @@ body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Dropdown styles */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background: #1f2937;
+  padding: 10px 0;
+  margin-top: 10px;
+  list-style: none;
+  border-radius: 8px;
+  min-width: 150px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 10px 16px;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+

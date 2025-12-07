@@ -13,6 +13,7 @@ function updateNavbar() {
 
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("userLogin");
+      localStorage.removeItem("userId");
       alert("Logged out successfully");
       location.href = "index.html";
     });
@@ -27,50 +28,98 @@ function updateNavbar() {
 }
 updateNavbar();
 
-
-//-------------------------------------
-// LOGO CLICK → HOME PAGE
-//-------------------------------------
 document.getElementById("logoClick").addEventListener("click", () => {
   window.location.href = "index.html";
 });
 
+//-------------------------------------
+// LOADER
+//-------------------------------------
+function showLoader() { document.getElementById("loader").classList.remove("hidden"); }
+function hideLoader() { document.getElementById("loader").classList.add("hidden"); }
 
 //-------------------------------------
-// LOADER (SHOW / HIDE)
-//-------------------------------------
-function showLoader() {
-  document.getElementById("loader").classList.remove("hidden");
-}
-function hideLoader() {
-  document.getElementById("loader").classList.add("hidden");
-}
-
-
-//-------------------------------------
-// LOAD COURSE DETAILS FROM URL PARAMS
+// LOAD COURSE DETAILS
 //-------------------------------------
 showLoader();
-
 const params = new URLSearchParams(window.location.search);
 
 const courseName = params.get("name");
 const courseDesc = params.get("desc");
 const courseImg = params.get("img");
 const courseAmount = params.get("amount");
+const courseId = params.get("courseId") || 1;
 
 document.getElementById("course-title").textContent = courseName;
 document.getElementById("course-desc").textContent = courseDesc;
 document.getElementById("course-image").src = courseImg;
-
 document.getElementById("price-box").innerHTML =
   `<div class="price">₹${Number(courseAmount).toLocaleString("en-IN")}</div>`;
 
 hideLoader();
 
+//-------------------------------------
+// LOAD SLIDES
+//-------------------------------------
+async function loadSlides() {
+  const container = document.getElementById("slides-container");
+  const userLogin = localStorage.getItem("userLogin");
+  let subscribed = false;
+console.log("userLogin",userLogin);
+  try {
+    if (userLogin) {
+      const subCheck = await fetch(
+        `http://localhost:8080/api/subscriptions/check?loginId=${userLogin}&courseId=${courseId}`
+      );
+      const subStatus = await subCheck.json();
+      subscribed = subStatus.subscribed;
+    }
+
+    debugger;
+    const slidesRes = await fetch(`http://localhost:8080/api/slides/${courseId}`);
+    const slides = await slidesRes.json();
+
+    container.innerHTML = "";
+
+    console.log("subscribed",subscribed);
+   if (!subscribed) {
+  const totalSlides = slides.length;
+  const firstSlide = slides[0]?.imagePath?.replace("E:/NET-SETTR_PROJECT/DOC/", "") || "";
+
+  container.innerHTML = `
+    <div class="locked-preview" id="openLocked">
+      <img src="http://localhost:8080/${firstSlide}" class="preview-slide" />
+      <div class="locked-overlay">
+        🔒 Locked — ${totalSlides} Slides<br>Click Buy to Unlock Full Content
+      </div>
+    </div>
+  `;
+  return;
+}
+
+// SUBSCRIBED → Show only the first slide & open full viewer on click
+if (slides.length > 0) {
+  const first = slides[0]?.imagePath?.replace("E:/NET-SETTR_PROJECT/DOC/", "") || "";
+
+  container.innerHTML = `
+    <img src="http://localhost:8080/${first}" class="preview-slide unlocked-slide" id="openViewer" />
+  `;
+
+  document.getElementById("openViewer").addEventListener("click", () => {
+    window.location.href = `viewer.html?courseId=${courseId}`;
+  });
+}
+
+
+
+  } catch (err) {
+    console.error("Slides load error", err);
+    container.innerHTML = `<p style="color:red;">Failed to load course content</p>`;
+  }
+}
 
 //-------------------------------------
-// BUY NOW → RAZORPAY PAYMENT
+// BUY NOW → Razorpay Integration
 //-------------------------------------
 document.getElementById("buy-btn").addEventListener("click", async () => {
   showLoader();
@@ -80,58 +129,64 @@ document.getElementById("buy-btn").addEventListener("click", async () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        amount: Number(courseAmount),
+        amount: Number(courseAmount) * 100,
         currency: "INR",
         receipt: `order_${Date.now()}`
       })
     });
 
     const order = await response.json();
+    hideLoader();
 
     if (!order.orderId) {
       alert("Failed to create payment order.");
-      hideLoader();
       return;
     }
 
     const options = {
       key: "rzp_test_RdAIlDO8yCtH5V",
       amount: order.amount,
-      currency: "INR",
+      currency: order.currency,
       order_id: order.orderId,
-
       name: "NET-SETTR",
       description: courseName,
       image: "logo.png",
 
-      prefill: {
-        name: localStorage.getItem("userLogin") || "Guest User"
-      },
+      handler: async function (paymentResponse) {
+        showLoader();
+        const verifyRes = await fetch("http://localhost:8080/api/payments/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_order_id: paymentResponse.razorpay_order_id,
+            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+            razorpay_signature: paymentResponse.razorpay_signature,
+            user_id: localStorage.getItem("userId"),
+            course_id: courseId,
+            amount: Number(courseAmount)
+          })
+        });
 
-      handler: function () {
-        alert("Payment Successful!");
+        const result = await verifyRes.json();
+        hideLoader();
 
-        // Optional redirect
-        window.location.href = "thankyou.html";
-      },
-
-      modal: {
-        ondismiss: function () {
-          console.log("Payment window closed.");
+        if (result.status === "success") {
+          document.getElementById("paymentSuccessModal").classList.remove("hidden");
+        } else {
+          alert("Verification Failed!");
         }
       },
 
-      theme: {
-        color: "#1f2937"
-      }
+      theme: { color: "#1f2937" }
     };
 
-    hideLoader();
     new Razorpay(options).open();
 
   } catch (error) {
-    console.error("Payment Error:", error);
     hideLoader();
-    alert("Something went wrong. Please try again.");
+    console.error("Payment error:", error);
+    alert("Something went wrong.");
   }
 });
+
+loadSlides();

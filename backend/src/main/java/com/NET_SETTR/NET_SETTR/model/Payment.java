@@ -15,6 +15,9 @@ public class Payment {
     @Column(name = "payment_id", length = 50)
     private String paymentId;
 
+    @Column(name = "user_id")
+    private long userId;
+
     @Column(name = "order_id", nullable = false)
     private String orderId;
 
@@ -38,6 +41,9 @@ public class Payment {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "payment_method")
+    private String paymentMethod;
 
     // getters and setters
 
@@ -111,6 +117,22 @@ public class Payment {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }
 

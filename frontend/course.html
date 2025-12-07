@@ -22,23 +22,60 @@
     <div class="spinner"></div>
   </div>
 
-  <!-- Centered Course Card -->
+  <!-- COURSE HEADER -->
   <section class="course-card">
+    <div class="course-left">
+      <h1 id="course-title"></h1>
+      <p id="course-desc"></p>
+    </div>
 
-  <div class="course-left">
-    <h1 id="course-title"></h1>
-    <p id="course-desc"></p>
+    <div class="course-right">
+      <img id="course-image" class="course-img" />
+      <div id="price-box"></div>
+      <button id="buy-btn">Buy Now</button>
+    </div>
+  </section>
+
+  <!-- COURSE CONTENT -->
+  <section class="course-content" id="course-content-section">
+    <h2>Course Content</h2>
+    <div id="slides-container" class="slides-wrapper">
+      <p class="placeholder">Loading course content...</p>
+    </div>
+  </section>
+
+  <!-- SUCCESS MODAL -->
+  <<div id="paymentSuccessModal" class="success-modal hidden">
+  <div class="modal-box">
+    <h2>🎉 Payment Successful</h2>
+    <p>Your course is now unlocked!</p>
+    <button id="continueBtn">Continue</button>
   </div>
+</div>
 
-  <div class="course-right">
-    <img id="course-image" class="course-img" />
-    <div id="price-box"></div>
-    <button id="buy-btn">Buy Now</button>
-  </div>
+<script>
+document.getElementById("continueBtn").addEventListener("click", () => {
+  document.getElementById("paymentSuccessModal").classList.add("hidden");
+  window.location.reload();
+});
+</script>
 
-</section>
 
+  <!-- Razorpay Script -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <!-- Custom script: should be placed LAST -->
   <script src="course.js"></script>
+
+  <!-- Modal handler -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("continueBtn").addEventListener("click", () => {
+        document.getElementById("paymentSuccessModal").classList.add("hidden");
+        window.location.reload();
+      });
+    });
+  </script>
+
 </body>
 </html>
