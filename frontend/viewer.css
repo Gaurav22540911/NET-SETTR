@@ -1,0 +1,46 @@
+
+body {
+  margin: 0;
+  background: #111;
+  color: white;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.viewer-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.slide-wrapper {
+  text-align: center;
+}
+
+.slide-img {
+  max-width: 85vw;
+  max-height: 85vh;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.nav-btn {
+  background: #222;
+  color: white;
+  padding: 15px 22px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid #555;
+}
+.nav-btn:hover {
+  background: #333;
+}
+
+.slide-count {
+  margin-top: 10px;
+  font-size: 18px;
+}

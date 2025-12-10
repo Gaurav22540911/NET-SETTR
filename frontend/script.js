@@ -78,6 +78,7 @@ async function loadCourses() {
           .map(
             course => `
           <div class="course"
+               data-id="${course.course_id}"
                data-name="${course.courseName}"
                data-description="${course.course_description}"
                data-image="${course.image_url}"
@@ -153,18 +154,21 @@ function setupCourseHover() {
 // CLICK → OPEN COURSE PAGE
 //-------------------------------------
 function setupCourseClick() {
+  debugger;
   document.querySelectorAll(".course").forEach(course => {
     course.addEventListener("click", () => {
       const name = encodeURIComponent(course.dataset.name);
       const desc = encodeURIComponent(course.dataset.description);
       const img = encodeURIComponent(course.dataset.image);
       const amount = encodeURIComponent(course.dataset.amount);
+      const id = encodeURIComponent(course.dataset.id);
+      console.log("course_id",id);
 
-      window.location.href = `course.html?name=${name}&desc=${desc}&img=${img}&amount=${amount}`;
+      window.location.href = `course.html?courseId=${id}&name=${name}&desc=${desc}&img=${img}&amount=${amount}`;
+
     });
   });
 }
-
 
 //-------------------------------------
 // LOAD COURSE TYPES FOR DROPDOWN

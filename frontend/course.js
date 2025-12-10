@@ -48,7 +48,7 @@ const courseName = params.get("name");
 const courseDesc = params.get("desc");
 const courseImg = params.get("img");
 const courseAmount = params.get("amount");
-const courseId = params.get("courseId") || 1;
+const courseId = params.get("courseId");
 
 document.getElementById("course-title").textContent = courseName;
 document.getElementById("course-desc").textContent = courseDesc;
@@ -65,7 +65,8 @@ async function loadSlides() {
   const container = document.getElementById("slides-container");
   const userLogin = localStorage.getItem("userLogin");
   let subscribed = false;
-console.log("userLogin",userLogin);
+
+  debugger;
   try {
     if (userLogin) {
       const subCheck = await fetch(
@@ -75,48 +76,57 @@ console.log("userLogin",userLogin);
       subscribed = subStatus.subscribed;
     }
 
-    debugger;
     const slidesRes = await fetch(`http://localhost:8080/api/slides/${courseId}`);
     const slides = await slidesRes.json();
 
-    container.innerHTML = "";
+    if (!slides || slides.length === 0) {
+      container.innerHTML = "<p>No slides found.</p>";
+      return;
+    }
 
-    console.log("subscribed",subscribed);
-   if (!subscribed) {
-  const totalSlides = slides.length;
-  const firstSlide = slides[0]?.imagePath?.replace("E:/NET-SETTR_PROJECT/DOC/", "") || "";
+    const totalSlides = slides.length;
+    const firstSlidePath = slides[0].imagePath.replace("E:/NET-SETTR_PROJECT/DOC/", "");
 
-  container.innerHTML = `
-    <div class="locked-preview" id="openLocked">
-      <img src="http://localhost:8080/${firstSlide}" class="preview-slide" />
-      <div class="locked-overlay">
-        🔒 Locked — ${totalSlides} Slides<br>Click Buy to Unlock Full Content
-      </div>
-    </div>
-  `;
-  return;
-}
+    container.innerHTML = ""; // Clear
 
-// SUBSCRIBED → Show only the first slide & open full viewer on click
-if (slides.length > 0) {
-  const first = slides[0]?.imagePath?.replace("E:/NET-SETTR_PROJECT/DOC/", "") || "";
+    if (!subscribed) {
+      // LOCKED VIEW
+      container.innerHTML = `
+        <div class="locked-preview">
+          <img src="http://localhost:8080/${firstSlidePath}" class="preview-slide" />
+          <div class="locked-overlay">
+            🔒 Locked — ${totalSlides} Slides<br>Click Buy to Unlock Full Content
+          </div>
+        </div>
+      `;
+    } else {
+      // UNLOCKED VIEW - View course tile
+      container.innerHTML = `
+        <div class="locked-preview" id="viewCourseBtn">
+          <img src="http://localhost:8080/${firstSlidePath}" class="preview-slide" />
+          <div class="locked-overlay">
+            ▶ View Course — ${totalSlides} Slides
+          </div>
+        </div>
+      `;
 
-  container.innerHTML = `
-    <img src="http://localhost:8080/${first}" class="preview-slide unlocked-slide" id="openViewer" />
-  `;
+      // Change Buy button to View button
+      const buyBtn = document.getElementById("buy-btn");
+      buyBtn.textContent = "View Course";
+      buyBtn.onclick = () => window.open(`viewer.html?courseId=${courseId}`, "_blank");
 
-  document.getElementById("openViewer").addEventListener("click", () => {
-    window.location.href = `viewer.html?courseId=${courseId}`;
-  });
-}
-
-
+      // Clicking preview also opens viewer
+      document.getElementById("viewCourseBtn").addEventListener("click", () => {
+        window.open(`viewer.html?courseId=${courseId}`, "_blank");
+      });
+    }
 
   } catch (err) {
     console.error("Slides load error", err);
     container.innerHTML = `<p style="color:red;">Failed to load course content</p>`;
   }
 }
+
 
 //-------------------------------------
 // BUY NOW → Razorpay Integration
