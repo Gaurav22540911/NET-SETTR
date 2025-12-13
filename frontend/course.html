@@ -39,41 +39,38 @@
   <!-- COURSE CONTENT -->
   <section class="course-content" id="course-content-section">
     <h2>Course Content</h2>
+
+    <!-- Notes will be injected here dynamically -->
     <div id="slides-container" class="slides-wrapper">
       <p class="placeholder">Loading course content...</p>
     </div>
   </section>
 
-  <!-- SUCCESS MODAL -->
-  <<div id="paymentSuccessModal" class="success-modal hidden">
-  <div class="modal-box">
-    <h2>🎉 Payment Successful</h2>
-    <p>Your course is now unlocked!</p>
-    <button id="continueBtn">Continue</button>
+  <!-- PAYMENT SUCCESS MODAL -->
+  <div id="paymentSuccessModal" class="success-modal hidden">
+    <div class="modal-box">
+      <h2>🎉 Payment Successful</h2>
+      <p>Your course is now unlocked!</p>
+      <button id="continueBtn">Continue</button>
+    </div>
   </div>
-</div>
 
-<script>
-document.getElementById("continueBtn").addEventListener("click", () => {
-  document.getElementById("paymentSuccessModal").classList.add("hidden");
-  window.location.reload();
-});
-</script>
-
-
-  <!-- Razorpay Script -->
+  <!-- Razorpay -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-  <!-- Custom script: should be placed LAST -->
+  <!-- Course Logic -->
   <script src="course.js"></script>
 
   <!-- Modal handler -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("continueBtn").addEventListener("click", () => {
-        document.getElementById("paymentSuccessModal").classList.add("hidden");
-        window.location.reload();
-      });
+      const btn = document.getElementById("continueBtn");
+      if (btn) {
+        btn.addEventListener("click", () => {
+          document.getElementById("paymentSuccessModal").classList.add("hidden");
+          window.location.reload();
+        });
+      }
     });
   </script>
 

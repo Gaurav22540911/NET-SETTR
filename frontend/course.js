@@ -61,71 +61,89 @@ hideLoader();
 //-------------------------------------
 // LOAD SLIDES
 //-------------------------------------
-async function loadSlides() {
+async function loadCourseContent() {
   const container = document.getElementById("slides-container");
+  container.innerHTML = "";
+
   const userLogin = localStorage.getItem("userLogin");
   let subscribed = false;
 
-  debugger;
   try {
+    // 1️⃣ Check subscription
     if (userLogin) {
-      const subCheck = await fetch(
+      const subRes = await fetch(
         `http://localhost:8080/api/subscriptions/check?loginId=${userLogin}&courseId=${courseId}`
       );
-      const subStatus = await subCheck.json();
-      subscribed = subStatus.subscribed;
+      const subJson = await subRes.json();
+      subscribed = subJson.subscribed;
     }
 
-    const slidesRes = await fetch(`http://localhost:8080/api/slides/${courseId}`);
-    const slides = await slidesRes.json();
+    // 2️⃣ Fetch notes
+    console.log("CourseId from URL1:", courseId);
+    const notesRes = await fetch(
+      `http://localhost:8080/api/courses/${courseId}/notes`
+    );
+    const notes = await notesRes.json();
 
-    if (!slides || slides.length === 0) {
-      container.innerHTML = "<p>No slides found.</p>";
+    if (!notes || notes.length === 0) {
+      container.innerHTML = "<p>No notes available.</p>";
       return;
     }
 
-    const totalSlides = slides.length;
-    const firstSlidePath = slides[0].imagePath.replace("E:/NET-SETTR_PROJECT/DOC/", "");
+    // 3️⃣ Render notes
+    for (const note of notes) {
+  const locked = !subscribed;
 
-    container.innerHTML = ""; // Clear
+  const imgPath = note.previewImage.startsWith("/DOC")
+    ? note.previewImage.replace("/DOC", "")
+    : note.previewImage;
 
-    if (!subscribed) {
-      // LOCKED VIEW
-      container.innerHTML = `
-        <div class="locked-preview">
-          <img src="http://localhost:8080/${firstSlidePath}" class="preview-slide" />
-          <div class="locked-overlay">
-            🔒 Locked — ${totalSlides} Slides<br>Click Buy to Unlock Full Content
-          </div>
-        </div>
-      `;
-    } else {
-      // UNLOCKED VIEW - View course tile
-      container.innerHTML = `
-        <div class="locked-preview" id="viewCourseBtn">
-          <img src="http://localhost:8080/${firstSlidePath}" class="preview-slide" />
-          <div class="locked-overlay">
-            ▶ View Course — ${totalSlides} Slides
-          </div>
-        </div>
-      `;
+  container.innerHTML += `
+  <div class="note-row">
+    <div class="note-left ${locked ? "locked" : "unlocked"}"
+         data-note-id="${note.noteId}">
+      <img src="http://localhost:8080${imgPath}" />
+      <div class="note-overlay">
+        ${locked ? "🔒 Locked" : "▶ View"}
+      </div>
+    </div>
 
-      // Change Buy button to View button
-      const buyBtn = document.getElementById("buy-btn");
-      buyBtn.textContent = "View Course";
-      buyBtn.onclick = () => window.open(`viewer.html?courseId=${courseId}`, "_blank");
+    <div class="note-right">
+      <h3>${note.title}</h3>
+      <p>${note.description}</p>
+    </div>
+  </div>
+`;
 
-      // Clicking preview also opens viewer
-      document.getElementById("viewCourseBtn").addEventListener("click", () => {
-        window.open(`viewer.html?courseId=${courseId}`, "_blank");
-      });
-    }
+}
+
+
+    // 4️⃣ Button handling
+      document.querySelectorAll(".note-left").forEach(noteEl => {
+    noteEl.addEventListener("click", () => {
+      if (!subscribed) {
+        document.getElementById("buy-btn")
+          .scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+
+      const noteId = noteEl.dataset.noteId;
+
+      window.open(
+        `viewer.html?courseId=${courseId}&noteId=${noteId}`,
+        "_blank"
+      );
+    });
+  });
+
 
   } catch (err) {
-    console.error("Slides load error", err);
-    container.innerHTML = `<p style="color:red;">Failed to load course content</p>`;
+    console.error(err);
+    container.innerHTML =
+      "<p style='color:red'>Failed to load course content</p>";
   }
 }
+
 
 
 //-------------------------------------
@@ -199,4 +217,7 @@ document.getElementById("buy-btn").addEventListener("click", async () => {
   }
 });
 
-loadSlides();
+document.addEventListener("DOMContentLoaded", () => {
+  loadCourseContent();
+});
+

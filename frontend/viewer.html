@@ -3,20 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Slide Viewer | NET-SETTR</title>
+  <title>Course Viewer | NET-SETTR</title>
   <link rel="stylesheet" href="viewer.css" />
 </head>
 <body>
 
-  <div class="viewer-container">
-    <button id="prevBtn" class="nav-btn">⟵ Prev</button>
+  <!-- HEADER -->
+  <div class="viewer-header">
+    📘 Course Content
+  </div>
 
-    <div class="slide-wrapper">
-      <img id="slideImage" class="slide-img" src="" alt="Slide" />
-      <p id="slideCount" class="slide-count"></p>
-    </div>
-
-    <button id="nextBtn" class="nav-btn">Next ⟶</button>
+  <!-- SLIDES -->
+  <div class="viewer-scroll" id="slidesContainer">
+    <p class="loading">Loading slides...</p>
   </div>
 
   <script src="viewer.js"></script>
