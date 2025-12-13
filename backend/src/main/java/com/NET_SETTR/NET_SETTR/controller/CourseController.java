@@ -1,7 +1,11 @@
 package com.NET_SETTR.NET_SETTR.controller;
 
+import com.NET_SETTR.NET_SETTR.dto.NoteResponse;
+import com.NET_SETTR.NET_SETTR.dto.NoteSlidesResponse;
 import com.NET_SETTR.NET_SETTR.model.Course;
 import com.NET_SETTR.NET_SETTR.service.CourseService;
+import com.NET_SETTR.NET_SETTR.service.NoteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +16,9 @@ import java.util.List;
 public class CourseController {
 
     private final CourseService courseService;
+
+    @Autowired
+    private NoteService noteService;
 
     public CourseController(CourseService courseService) {
         this.courseService = courseService;
@@ -29,4 +36,17 @@ public class CourseController {
     public List<String> getCourseTypes() {
         return courseService.getCourseTypes();
     }
+
+    @GetMapping("/{courseId}/notes")
+    public List<NoteResponse> getCourseNotes(@PathVariable Long courseId) {
+        return noteService.getNotesForCourse(courseId);
+    }
+
+    @GetMapping("/{courseId}/notes/{noteId}/slides")
+    public NoteSlidesResponse getSlides(
+            @PathVariable Long courseId,
+            @PathVariable Long noteId) {
+        return noteService.getSlidesForNote(courseId, noteId);
+    }
+
 }

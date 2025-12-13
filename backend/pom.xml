@@ -104,6 +104,14 @@
 			<version>5.2.3</version>
 		</dependency>
 
+		<!-- Lombok — Required for @Data, @Getter, @Setter, @Builder -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.30</version>
+			<scope>provided</scope>
+		</dependency>
+
 
 	</dependencies>
 
