@@ -1,5 +1,6 @@
 package com.NET_SETTR.NET_SETTR.service;
 
+import com.NET_SETTR.NET_SETTR.ENUM.OtpPurpose;
 import com.NET_SETTR.NET_SETTR.dto.AuthResponse;
 import com.NET_SETTR.NET_SETTR.model.EmailOtp;
 import com.NET_SETTR.NET_SETTR.model.User;
@@ -7,6 +8,7 @@ import com.NET_SETTR.NET_SETTR.repository.EmailOtpRepository;
 import com.NET_SETTR.NET_SETTR.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,10 @@ public class AuthService {
 
     @Autowired
     private EmailService emailService;
+
+    private final UserRepository userRepository;
+    private final OtpService otpService;
+    private final PasswordEncoder passwordEncoder;
 
     // --------------------------
     // SIGNUP
@@ -132,4 +138,56 @@ public class AuthService {
         user.setLastDeviceLoginAt(LocalDateTime.now());
         userRepo.save(user);
     }
+
+    public AuthService(UserRepository userRepository,
+                       OtpService otpService,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.otpService = otpService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public void forgotPassword(String loginId) {
+
+        Optional<User> userOpt = loginId.matches("\\d{10}")
+                ? userRepository.findByPhoneNo(loginId)
+                : userRepository.findByEmail(loginId);
+
+        userOpt.ifPresent(user ->
+                otpService.generateAndSendOtp(user, OtpPurpose.RESET_PASSWORD)
+        );
+    }
+
+    public boolean verifyResetOtp(String loginId, String otp) {
+
+        User user = findByLoginId(loginId);
+
+        return otpService.verifyOtp(
+                user,
+                otp,
+                OtpPurpose.RESET_PASSWORD
+        );
+    }
+
+    public void resetPassword(String loginId, String newPassword) {
+
+        User user = findByLoginId(loginId);
+
+        otpService.ensureOtpVerified(user, OtpPurpose.RESET_PASSWORD);
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        otpService.invalidateOtp(user, OtpPurpose.RESET_PASSWORD);
+    }
+
+    public User findByLoginId(String loginId) {
+        return loginId.matches("\\d{10}")
+                ? userRepository.findByPhoneNo(loginId)
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                : userRepository.findByEmail(loginId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+
 }

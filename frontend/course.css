@@ -11,8 +11,8 @@ body {
    NAVBAR (IDENTICAL TO HOME PAGE)
 ============================ */
 .navbar {
-  background-color: #1f2937;
-  color: white;
+  background-color: #8000FF;
+  color: #FFFFFF;
   padding: 14px 40px;
   display: flex;
   justify-content: space-between;
@@ -23,11 +23,15 @@ body {
   z-index: 200;
 }
 
+
 .logo {
   display: flex;
-  align-items: center;
+  align-items: center;       /* 🔥 fix */
+  gap: 12px;
+  font-weight: 700;
+  font-size: 18px;
+  color: #ffffff;
   cursor: pointer;
-  gap: 10px;
 }
 
 .logo img {
@@ -43,23 +47,36 @@ body {
 }
 
 .menu a {
-  color: white;
+  color: #FFFFFF;
   text-decoration: none;
   font-weight: 600;
   padding: 8px 16px;
   border-radius: 8px;
-  transition: background 0.25s ease-in-out;
+  transition: 0.25s ease-in-out;
+}
+
+.menu a:hover {
+  background: #9B2BFF;
+  transform: translateY(-3px) scale(1.05);
 }
 
 /* SIGN UP BUTTON — Dark */
 .signup-btn {
-  background: #111827;
-  border: 2px solid transparent;
+  background: linear-gradient(135deg, #69489b, #8000FF);
+  color: #8000FF;
+  border: 2px solid #FFFFFF;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.3);
 }
 
 .signup-btn:hover {
-  background: #000;
+  background: #FFFFFF;
+  color: #8000FF;
+  box-shadow: 0 0 15px rgba(255,255,255,0.6),
+              0 0 10px rgba(128,0,255,0.6);
 }
+
 
 /* LOGIN + LOGOUT — Frosted Glass */
 .login-btn,
@@ -155,21 +172,22 @@ body {
 
 /* BUY BUTTON */
 #buy-btn {
-  background-color: #1f2937;
+  background: linear-gradient(135deg, #8000FF, #9B2BFF);
   color: white;
   border: none;
   padding: 14px 40px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 18px;
+  font-weight: 700;
   cursor: pointer;
-  width: 100%;
-  max-width: 280px;
   transition: 0.3s ease;
 }
 
 #buy-btn:hover {
-  background: #374151;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(128,0,255,0.5);
 }
+
 
 /* MOBILE VIEW (STACKED) */
 @media (max-width: 768px) {
@@ -229,12 +247,11 @@ body {
 ============================ */
 .course-content {
   max-width: 950px;
-  margin: 40px auto;  /* center and spacing */
-  background: #fff;
-  padding: 25px 35px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 30px 35px;
   border-radius: 14px;
   box-shadow: 0 5px 18px rgba(0,0,0,0.12);
-  text-align: center;
 }
 
 .course-content h2 {
@@ -361,12 +378,14 @@ body {
   display: flex;
   gap: 30px;
   margin-bottom: 40px;
-  align-items: flex-start;
+  align-items: center;       
 }
 
 .note-left {
-  cursor: pointer;
+  flex-shrink: 0;            
+  width: 260px;              
   position: relative;
+  cursor: pointer;
 }
 
 .note-left.locked {
@@ -375,22 +394,23 @@ body {
 }
 
 .note-left img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
+  width: 260px;              
+  height: 160px;             
+  object-fit: cover;         
   border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.note-left:hover img {
+  transform: scale(1.04);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
 }
 
 /* Overlay */
 .note-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 600;
   border-radius: 12px;
 }
 

@@ -26,8 +26,11 @@ body {
 
 .logo {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: center;      
+  gap: 12px;
+  font-weight: 700;
+  font-size: 18px;
+  color: #ffffff;
   cursor: pointer;
 }
 
@@ -71,7 +74,7 @@ body {
 }
 
 .signup-btn {
-  background: linear-gradient(135deg, #FFFFFF, #8000FF);
+  background: linear-gradient(135deg, #69489b, #8000FF);
   color: #8000FF;               /* Purple text visible */
   border: 2px solid #FFFFFF;
   font-weight: 700;
@@ -111,91 +114,6 @@ body {
   background: rgba(255,255,255,0.30);
 }
 
-
-/* ------------------------------------------------------
-   HERO SECTION (Fun + Professional)
--------------------------------------------------------*/
-.hero {
-  position: relative;
-  padding: 90px 25px;
-  text-align: center;
-  overflow: hidden;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-/* Main Gradient Burst */
-.hero::before {
-  content: "";
-  position: absolute;
-  top: -120px;
-  left: 50%;
-  width: 750px;
-  height: 750px;
-
-  background: radial-gradient(
-    circle,
-    #ffd6a5 10%,
-    #ff9a9e 40%,
-    #a1c4fd 75%,
-    transparent 90%
-  );
-
-  transform: translateX(-50%);
-  filter: blur(40px);
-  animation: heroPulse 7s ease-in-out infinite alternate;
-  z-index: 0;
-}
-
-/* Soft Floating Blob */
-.hero::after {
-  content: "";
-  position: absolute;
-  bottom: -150px;
-  right: -120px;
-  width: 450px;
-  height: 450px;
-
-  background: radial-gradient(
-    circle,
-    #d4fc79 10%,
-    #96e6a1 60%,
-    transparent 90%
-  );
-
-  filter: blur(30px);
-  animation: blobFloat 8s ease-in-out infinite alternate;
-  opacity: 0.9;
-  z-index: 0;
-}
-
-@keyframes heroPulse {
-  0% { transform: translateX(-50%) scale(1); }
-  100% { transform: translateX(-50%) scale(1.15); }
-}
-
-@keyframes blobFloat {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(-40px, 20px) scale(1.2); }
-}
-
-/* Hero Text */
-.hero h1 {
-  font-size: 38px;
-  font-weight: 800;
-  color: #111827;
-  margin-bottom: 10px;
-  position: relative;
-  z-index: 2;
-}
-
-.hero p {
-  font-size: 17px;
-  color: #374151;
-  margin-top: 5px;
-  position: relative;
-  z-index: 2;
-}
 
 
 /* ------------------------------------------------------
@@ -431,3 +349,101 @@ body {
 .dropdown:hover .dropdown-menu {
   display: block;
 }
+
+
+
+
+
+/* ============================
+   HERO – IMAGE CARD STYLE
+============================ */
+.hero {
+  padding: 60px 20px 80px;
+  background: #f3f4f6;
+  display: flex;
+  justify-content: center;
+}
+
+/* Floating hero card */
+.hero-card {
+  width: 180%;
+  max-width: 1200px;
+  height: 420px;
+
+  border-radius: 28px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft overlay for text readability */
+.hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    #ffffff 0%,
+    #bfa3db 35%,
+    #966bdc 65%,
+    #4f1b9c 100%
+  );
+}
+
+
+/* Content */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  max-width: 620px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 60px;
+}
+
+/* Heading */
+.hero-content h1 {
+  font-size: 42px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 14px;
+}
+
+.hero-content h1 span {
+  color: #482b74;
+}
+
+/* Subtitle */
+.hero-content p {
+  font-size: 18px;
+  color: #1d1919;
+  line-height: 1.6;
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+@media (max-width: 900px) {
+  .hero-card {
+    height: auto;
+  }
+
+  .hero-content {
+    padding: 40px 28px;
+  }
+
+  .hero-content h1 {
+    font-size: 30px;
+  }
+
+  .hero-content p {
+    font-size: 16px;
+  }
+}
+
+

@@ -21,7 +21,7 @@ function updateNavbar() {
   if (user) {
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("userLogin");
-      alert("Logged out successfully");
+      //alert("Logged out successfully");
       window.location.href = "index.html";
     });
   }

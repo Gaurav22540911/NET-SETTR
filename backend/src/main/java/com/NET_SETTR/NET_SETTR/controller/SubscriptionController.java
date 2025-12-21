@@ -26,9 +26,17 @@ public class SubscriptionController {
     @GetMapping("/check")
     public Map<String, Object> checkSubscription(@RequestParam String loginId, @RequestParam Integer courseId) {
 
+        User user;
         // Convert email to userId
-        User user = userRepository.findByEmail(loginId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (loginId.contains("@")) {
+            user = userRepository.findByEmail(loginId)
+                    .orElseThrow(() -> new RuntimeException("User not found with email"));
+        }
+        // 🔹 Else treat it as phone number
+        else {
+            user = userRepository.findByPhoneNo(loginId)
+                    .orElseThrow(() -> new RuntimeException("User not found with phone number"));
+        }
 
         boolean subscribed = subscriptionService.isUserSubscribed(user.getUserId(), courseId);
 

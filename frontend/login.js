@@ -1,5 +1,24 @@
-// login.js
 const loginForm = document.getElementById("login-form");
+const loader = document.getElementById("loader");
+const modal = document.getElementById("modal");
+const modalText = document.getElementById("modalText");
+const modalCancel = document.getElementById("modalCancel");
+const modalConfirm = document.getElementById("modalConfirm");
+
+function showLoader(show) {
+  loader.classList.toggle("hidden", !show);
+}
+
+function showModal(text, onConfirm) {
+  modalText.innerText = text;
+  modal.classList.remove("hidden");
+
+  modalCancel.onclick = () => modal.classList.add("hidden");
+  modalConfirm.onclick = () => {
+    modal.classList.add("hidden");
+    onConfirm();
+  };
+}
 
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -7,58 +26,54 @@ loginForm.addEventListener("submit", async (e) => {
   const loginId = document.getElementById("loginId").value.trim();
   const password = document.getElementById("password").value;
 
-  if (!loginId) return alert("Please enter email or phone.");
   const isPhone = /^[0-9]+$/.test(loginId);
-  if (isPhone && loginId.length !== 10) return alert("Phone must be 10 digits.");
-  if (!password || password.length < 8) return alert("Password must be at least 8 characters.");
+  if (!loginId || (isPhone && loginId.length !== 10) || password.length < 8) {
+    showModal("Please enter valid credentials.", () => {});
+    return;
+  }
 
-  // DEVICE ID LOGIC
   let deviceId = localStorage.getItem("device_id");
   if (!deviceId) {
     deviceId = crypto.randomUUID();
     localStorage.setItem("device_id", deviceId);
   }
 
-  const body = { loginId, password, deviceId };
+  showLoader(true);
 
   try {
     const res = await fetch("http://localhost:8080/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ loginId, password, deviceId })
     });
 
     const data = await res.json();
+    showLoader(false);
 
     if (data.status === "LOGIN_SUCCESS") {
       localStorage.setItem("userLogin", loginId);
-      alert("Login successful!");
       window.location.href = "index.html";
     }
     else if (data.status === "DEVICE_MISMATCH") {
-      // show modal later; temporary alert
-      const confirmSwitch = confirm(
-        "⚠ Your account is active on another device.\nDo you want to switch to this device?"
+      showModal(
+        "Your account is active on another device. Switch to this device?",
+        async () => {
+          await fetch("http://localhost:8080/api/auth/force-device-switch", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ loginId, deviceId })
+          });
+          localStorage.setItem("userLogin", loginId);
+          window.location.href = "index.html";
+        }
       );
-
-      if (confirmSwitch) {
-        await fetch("http://localhost:8080/api/auth/force-device-switch", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ loginId, deviceId }),
-        });
-
-        localStorage.setItem("userLogin", loginId);
-        alert("Switched to this device.");
-        window.location.href = "index.html";
-      }
     }
     else {
-      alert(data.message || "Login failed.");
+      showModal(data.message || "Login failed.", () => {});
     }
 
   } catch (err) {
-    console.error("Login error", err);
-    alert("Server error, try again");
+    showLoader(false);
+    showModal("Server error. Please try again.", () => {});
   }
 });

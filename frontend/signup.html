@@ -9,7 +9,7 @@
 
 <body>
 
-<!-- Navbar -->
+<!-- NAVBAR -->
 <nav class="navbar">
   <div class="logo" onclick="window.location.href='index.html'">
     <img src="logo.png" alt="NET-SETTR">
@@ -17,6 +17,7 @@
   </div>
 </nav>
 
+<!-- SIGNUP -->
 <div class="signup-container">
   <div class="signup-box">
     <h1>Create Your Account</h1>
@@ -43,25 +44,54 @@
         <input type="password" id="password" minlength="8" required>
       </div>
 
+      <!-- PASSWORD STRENGTH -->
+      <div class="password-meter">
+        <div class="strength-bar">
+          <span id="strengthFill"></span>
+        </div>
+        <p class="strength-text" id="strengthText">Password strength</p>
+      </div>
+
       <button id="signup-btn" type="submit">Sign Up</button>
 
-      <p class="login-link">Already have an account?
+      <p class="login-link">
+        Already have an account?
         <a href="login.html">Login</a>
       </p>
+
     </form>
   </div>
 </div>
 
-<!-- OTP Popup -->
+<!-- OTP POPUP -->
 <div class="otp-popup" id="otp-popup">
   <div class="otp-box">
     <h2>Email Verification</h2>
-    <p>We sent an OTP to your email.</p>
+    <p>Enter the 6-digit OTP sent to your email</p>
 
-    <input type="text" id="otp-input" maxlength="6" placeholder="Enter OTP">
+    <div class="otp-inputs">
+      <input maxlength="1">
+      <input maxlength="1">
+      <input maxlength="1">
+      <input maxlength="1">
+      <input maxlength="1">
+      <input maxlength="1">
+    </div>
+
     <button id="verify-btn">Verify OTP</button>
   </div>
 </div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <p id="loadingText">Sending OTP...</p>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="custom-toast" id="toast"></div>
 
 <script src="signup.js"></script>
 </body>

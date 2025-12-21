@@ -52,13 +52,21 @@ public class PaymentController {
             String orderId = data.get("razorpay_order_id");
             String paymentId = data.get("razorpay_payment_id");
             String signature = data.get("razorpay_signature");
-            String loginId = data.get("login_id");   // email
+            String loginId = data.get("loginId");   // email/number
             Integer courseId = Integer.parseInt(data.get("course_id"));
             double amount = Double.parseDouble(data.get("amount"));
 
+            User user;
             // fetch user using loginId (email)
-            User user = userRepository.findByEmail(loginId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            if (loginId.contains("@")) {
+                user = userRepository.findByEmail(loginId)
+                        .orElseThrow(() -> new RuntimeException("User not found with email"));
+            }
+            // 🔹 Else treat it as phone number
+            else {
+                user = userRepository.findByPhoneNo(loginId)
+                        .orElseThrow(() -> new RuntimeException("User not found with phone number"));
+            }
 
             Long userId = user.getUserId();
             String phoneNo = user.getPhoneNo();  // NOW we have phone number

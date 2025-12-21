@@ -1,64 +1,169 @@
-/* Basic clean login styles */
+/* RESET */
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f7fa;
-  color: #222;
-  min-height: 100vh;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f3f4f6;
 }
 
-/* navbar */
+/* NAVBAR */
 .navbar {
-  background: #20232a;
+  background: #8000FF;
   color: #fff;
-  padding: 12px 28px;
+  padding: 14px 40px;
   display: flex;
   align-items: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
 }
-.logo { display:flex; align-items:center; gap:10px; cursor:pointer; }
-.logo img { width:36px; height:36px; border-radius:6px; }
+.logo {
+  display: flex;
+  align-items: center;       /* 🔥 fix */
+  gap: 12px;
+  font-weight: 700;
+  font-size: 18px;
+  color: #ffffff;
+  cursor: pointer;
+}
+.logo img {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+}
 
-/* center box */
+/* LOGIN CARD */
 .login-container {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:48px 16px;
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
 }
 .login-box {
-  width:100%;
-  max-width:420px;
-  background:#fff;
-  padding:36px;
-  border-radius:12px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.15);
 }
-.login-box h1 { margin:0 0 18px 0; font-size:22px; }
 
-.form-group { margin-bottom:14px; }
-.form-group label { display:block; font-weight:600; margin-bottom:6px; }
+.login-box h1 {
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* FORM */
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+}
 .form-group input {
-  width:100%;
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #d9dff2;
-  font-size:15px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: #8000FF;
+  box-shadow: 0 0 0 3px rgba(128,0,255,0.15);
 }
 
-/* button */
+/* BUTTON */
 #login-btn {
-  width:100%;
-  padding:12px;
-  background:#20232a;
-  color:#fff;
-  border:none;
-  border-radius:8px;
-  font-size:16px;
-  cursor:pointer;
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #8000FF, #9B2BFF);
+  cursor: pointer;
+  transition: 0.3s;
 }
-#login-btn:hover { background:#2b3136; }
+#login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(128,0,255,0.45);
+}
 
-/* helper */
-.helper { text-align:center; margin-top:12px; }
-.helper a { color:#20232a; text-decoration:none; font-weight:600; }
+/* HELPER */
+.helper {
+  text-align: center;
+  margin-top: 14px;
+}
+.helper a {
+  color: #8000FF;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* LOADER */
+.loader {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.loader.hidden { display: none; }
+.spinner {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 8px solid #ddd;
+  border-top: 8px solid #8000FF;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+.modal.hidden { display: none; }
+
+.modal-box {
+  background: white;
+  padding: 28px;
+  width: 360px;
+  border-radius: 16px;
+  text-align: center;
+}
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+.modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+#modalCancel {
+  background: #e5e7eb;
+}
+#modalConfirm {
+  background: linear-gradient(135deg, #8000FF, #9B2BFF);
+  color: white;
+}

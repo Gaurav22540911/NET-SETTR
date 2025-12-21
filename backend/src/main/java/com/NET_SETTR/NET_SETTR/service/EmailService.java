@@ -19,4 +19,16 @@ public class EmailService {
 
         mailSender.send(msg);
     }
+
+
+    public void sendOtpEmail(String to, String otp) {
+        String subject = "Your NET-SETTR OTP Code";
+        String text =
+                "Your OTP is: " + otp + "\n\n" +
+                        "This OTP is valid for 5 minutes.\n" +
+                        "Do not share this code with anyone.\n\n" +
+                        "– NET-SETTR Team";
+
+        sendEmail(to, subject, text);
+    }
 }

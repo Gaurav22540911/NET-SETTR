@@ -14,7 +14,7 @@ function updateNavbar() {
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("userLogin");
       localStorage.removeItem("userId");
-      alert("Logged out successfully");
+      //alert("Logged out successfully");
       location.href = "index.html";
     });
 
@@ -71,6 +71,7 @@ async function loadCourseContent() {
   try {
     // 1️⃣ Check subscription
     if (userLogin) {
+      debugger;
       const subRes = await fetch(
         `http://localhost:8080/api/subscriptions/check?loginId=${userLogin}&courseId=${courseId}`
       );
@@ -170,7 +171,7 @@ document.getElementById("buy-btn").addEventListener("click", async () => {
       alert("Failed to create payment order.");
       return;
     }
-
+debugger;
     const options = {
       key: "rzp_test_RdAIlDO8yCtH5V",
       amount: order.amount,
@@ -189,7 +190,8 @@ document.getElementById("buy-btn").addEventListener("click", async () => {
             razorpay_order_id: paymentResponse.razorpay_order_id,
             razorpay_payment_id: paymentResponse.razorpay_payment_id,
             razorpay_signature: paymentResponse.razorpay_signature,
-            user_id: localStorage.getItem("userId"),
+            //user_id: localStorage.getItem("userId"),
+            loginId: localStorage.getItem("userLogin"),
             course_id: courseId,
             amount: Number(courseAmount)
           })
