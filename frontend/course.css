@@ -164,10 +164,9 @@ body {
 }
 
 .price {
-  font-size: 24px;
-  font-weight: bold;
-  color: #065f46;
-  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
 }
 
 /* BUY BUTTON */
@@ -186,6 +185,12 @@ body {
 #buy-btn:hover {
   transform: translateY(-2px) scale(1.03);
   box-shadow: 0 10px 25px rgba(128,0,255,0.5);
+}
+
+#buy-btn:disabled {
+  background: #9ca3af;
+  color: #fff;
+  box-shadow: none;
 }
 
 
@@ -450,6 +455,25 @@ body {
   -webkit-line-clamp: 3; /* max 3 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ===============================
+   FIX RAZORPAY PRICE FORMAT
+   =============================== */
+
+/* Reset any global spacing affecting Razorpay */
+.razorpay-container *,
+.razorpay-checkout *,
+.razorpay-payment-button {
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+  font-feature-settings: normal !important;
+  text-transform: none !important;
+}
+
+/* Ensure numbers render properly */
+.razorpay-container {
+  font-variant-numeric: normal !important;
 }
 
 

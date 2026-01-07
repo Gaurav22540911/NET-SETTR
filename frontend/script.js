@@ -78,18 +78,30 @@ async function loadCourses() {
           .map(
             course => `
           <div class="course"
-               data-id="${course.course_id}"
-               data-name="${course.courseName}"
-               data-description="${course.course_description}"
-               data-image="${course.image_url}"
-               data-amount="${course.amount}">
-            <img src="${course.image_url}" alt="${course.courseName}" />
-            <h3>${course.courseName}</h3>
-            <p>${course.course_description}</p>
-            <span class="price">₹${Number(course.amount).toLocaleString("en-IN", {
-              minimumFractionDigits: 2
-            })}</span>
-          </div>`
+     data-id="${course.course_id}"
+     data-name="${course.courseName}"
+     data-description="${course.course_description}"
+     data-image="${course.image_url}"
+     data-amount="${course.amount}">
+
+  <div class="course-img">
+    <img src="${course.image_url}" alt="${course.courseName}" />
+  </div>
+
+  <div class="course-info">
+    <h3>${course.courseName}</h3>
+    <p>${course.course_description}</p>
+
+    <div class="course-footer">
+      <span class="price">₹${Number(course.amount).toLocaleString("en-IN", {
+        minimumFractionDigits: 2
+      })}</span>
+
+      <button class="view-course-btn">View Course</button>
+    </div>
+  </div>
+</div>
+`
           )
           .join("")}
       </div>
@@ -169,6 +181,19 @@ function setupCourseClick() {
     });
   });
 }
+
+// View Course button & image click (safe, same navigation)
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".view-course-btn");
+  const img = e.target.closest(".course-img img");
+
+  if (btn || img) {
+    e.stopPropagation();
+    const course = (btn || img).closest(".course");
+    course.click(); // reuse existing logic
+  }
+});
+
 
 //-------------------------------------
 // LOAD COURSE TYPES FOR DROPDOWN

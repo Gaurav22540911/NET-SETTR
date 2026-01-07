@@ -50,17 +50,39 @@ const courseImg = params.get("img");
 const courseAmount = params.get("amount");
 const courseId = params.get("courseId");
 
+// ================================
+// NORMALIZE COURSE AMOUNT (₹)
+// ================================
+const rawAmount = Number(courseAmount);
+
+// if amount accidentally comes in paise or extra zeros
+const normalizedAmount = rawAmount > 10000 ? rawAmount / 100 : rawAmount;
+
+console.log("Normalized Amount (₹):", normalizedAmount);
+
+
 document.getElementById("course-title").textContent = courseName;
 document.getElementById("course-desc").textContent = courseDesc;
 document.getElementById("course-image").src = courseImg;
 document.getElementById("price-box").innerHTML =
-  `<div class="price">₹${Number(courseAmount).toLocaleString("en-IN")}</div>`;
+  `<div class="price">₹${normalizedAmount.toLocaleString("en-IN")}</div>`;
 
 hideLoader();
 
 //-------------------------------------
 // LOAD SLIDES
 //-------------------------------------
+function disableBuyButton() {
+  const buyBtn = document.getElementById("buy-btn");
+  if (!buyBtn) return;
+
+  buyBtn.disabled = true;
+  buyBtn.textContent = "Already Purchased";
+  buyBtn.style.cursor = "not-allowed";
+  buyBtn.style.opacity = "0.6";
+}
+
+
 async function loadCourseContent() {
   const container = document.getElementById("slides-container");
   container.innerHTML = "";
@@ -78,6 +100,11 @@ async function loadCourseContent() {
       const subJson = await subRes.json();
       subscribed = subJson.subscribed;
     }
+
+    // ✅ Disable Buy button if already subscribed
+if (subscribed) {
+  disableBuyButton();
+}
 
     // 2️⃣ Fetch notes
     console.log("CourseId from URL1:", courseId);
@@ -151,17 +178,35 @@ async function loadCourseContent() {
 // BUY NOW → Razorpay Integration
 //-------------------------------------
 document.getElementById("buy-btn").addEventListener("click", async () => {
+  if (document.getElementById("buy-btn").disabled) {
+    return; // ⛔ prevent double payment
+  }
+
+  // 🔒 FORCE LOGIN BEFORE PAYMENT
+  const userLogin = localStorage.getItem("userLogin");
+
+  if (!userLogin) {
+    window.location.href =
+      `signup.html?redirect=course.html${encodeURIComponent(window.location.search)}`;
+    return;
+  }
+
   showLoader();
+
+
+  console.log("Course Amount (₹):", normalizedAmount);
+console.log("Amount sent to Razorpay (paise):", normalizedAmount * 100);
 
   try {
     const response = await fetch("http://localhost:8080/api/payments/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        amount: Number(courseAmount) * 100,
-        currency: "INR",
-        receipt: `order_${Date.now()}`
-      })
+  amount: normalizedAmount,
+  currency: "INR",
+  receipt: `order_${Date.now()}`
+})
+
     });
 
     const order = await response.json();
@@ -179,7 +224,11 @@ debugger;
       order_id: order.orderId,
       name: "NET-SETTR",
       description: courseName,
-      image: "logo.png",
+     // image: "logo.png",
+      prefill: {
+  contact: localStorage.getItem("userLogin") || ""
+},
+
 
       handler: async function (paymentResponse) {
         showLoader();
@@ -193,7 +242,7 @@ debugger;
             //user_id: localStorage.getItem("userId"),
             loginId: localStorage.getItem("userLogin"),
             course_id: courseId,
-            amount: Number(courseAmount)
+            amount: normalizedAmount
           })
         });
 
