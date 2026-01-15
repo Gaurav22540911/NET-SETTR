@@ -1,5 +1,6 @@
 package com.NET_SETTR.NET_SETTR.controller;
 
+import com.NET_SETTR.NET_SETTR.dto.SubscriptionDetailsResponse;
 import com.NET_SETTR.NET_SETTR.model.User;
 import com.NET_SETTR.NET_SETTR.repository.UserRepository;
 import com.NET_SETTR.NET_SETTR.service.SubscriptionService;
@@ -50,5 +51,23 @@ public class SubscriptionController {
 //        return Map.of("subscribed", subscribed);
 //    }
 
+    @GetMapping("/details")
+    public SubscriptionDetailsResponse subscriptionDetails(
+            @RequestParam String loginId,
+            @RequestParam Integer courseId
+    ) {
+        User user = resolveUser(loginId);
+        return subscriptionService.getSubscriptionDetails(user.getUserId(), courseId);
+    }
+
+    // 🔁 Centralized user resolution
+    private User resolveUser(String loginId) {
+        if (loginId.contains("@")) {
+            return userRepository.findByEmail(loginId)
+                    .orElseThrow(() -> new RuntimeException("User not found with email"));
+        }
+        return userRepository.findByPhoneNo(loginId)
+                .orElseThrow(() -> new RuntimeException("User not found with phone number"));
+    }
 
 }

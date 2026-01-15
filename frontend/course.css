@@ -476,4 +476,18 @@ body {
   font-variant-numeric: normal !important;
 }
 
+.subscription-info {
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.subscription-info.active {
+  color: #065f46; /* green */
+}
+
+.subscription-info.inactive {
+  color: #6b7280; /* gray */
+}
 

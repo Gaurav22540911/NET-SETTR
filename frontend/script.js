@@ -10,6 +10,11 @@ function updateNavbar() {
       <a href="#" class="menu-link">Courses ▼</a>
       <ul class="dropdown-menu" id="courseDropdown"></ul>
     </li>
+
+    <li class="dropdown">
+      <a href="#" class="menu-link">Syllabus ▼</a>
+      <ul class="dropdown-menu" id="syllabusDropdown"></ul>
+    </li>
     ${
       user
         ? `<li><a href="#" id="logoutBtn">Logout</a></li>`
@@ -26,7 +31,8 @@ function updateNavbar() {
     });
   }
 
-  loadCourseTypes(); // load dropdown after menu rendered
+  loadCourseTypes();
+  loadSyllabus();
 }
 updateNavbar();
 
@@ -212,6 +218,32 @@ async function loadCourseTypes() {
     console.error("Error loading course types:", error);
   }
 }
+
+//-------------------------------------
+// LOAD SYLLABUS FOR DROPDOWN
+//-------------------------------------
+async function loadSyllabus() {
+  try {
+    const response = await fetch("http://localhost:8080/api/syllabus");
+    const syllabusList = await response.json();
+
+    const dropdown = document.getElementById("syllabusDropdown");
+
+    dropdown.innerHTML = syllabusList
+      .map(s => `
+        <li>
+          <a href="http://localhost:8080${s.fileUrl}" target="_blank">
+            ${s.name}
+          </a>
+        </li>
+      `)
+      .join("");
+
+  } catch (error) {
+    console.error("Error loading syllabus:", error);
+  }
+}
+
 
 
 //-------------------------------------

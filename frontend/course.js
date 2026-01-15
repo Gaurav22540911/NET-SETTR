@@ -85,26 +85,93 @@ function disableBuyButton() {
 
 async function loadCourseContent() {
   const container = document.getElementById("slides-container");
+  const infoBox = document.getElementById("subscription-info");
+  const buyBtn = document.getElementById("buy-btn");
   container.innerHTML = "";
 
   const userLogin = localStorage.getItem("userLogin");
-  let subscribed = false;
+if (!userLogin) {
+    infoBox.textContent = "⏳ Access valid for 6 months from date of purchase";
+    infoBox.className = "subscription-info inactive";
 
+    buyBtn.disabled = false;
+    buyBtn.textContent = "Buy Now";
+
+    // Notes remain locked
+    //await renderNotes(false);
+    //return; // ⛔ STOP execution here
+  }
+
+
+  let subscribed = false;
+let hasAccess = false;
+
+  debugger;
   try {
     // 1️⃣ Check subscription
     if (userLogin) {
-      debugger;
-      const subRes = await fetch(
-        `http://localhost:8080/api/subscriptions/check?loginId=${userLogin}&courseId=${courseId}`
-      );
-      const subJson = await subRes.json();
-      subscribed = subJson.subscribed;
+      // const subRes = await fetch(
+      //   `http://localhost:8080/api/subscriptions/check?loginId=${userLogin}&courseId=${courseId}`
+      // );
+      // const subJson = await subRes.json();
+      // subscribed = subJson.subscribed;
+
+
+const infoBox = document.getElementById("subscription-info");
+
+if (userLogin) {
+  const subRes = await fetch(
+    `http://localhost:8080/api/subscriptions/details?loginId=${userLogin}&courseId=${courseId}`
+  );
+
+  const subJson = await subRes.json();
+
+  subscribed = subJson.subscribed;
+
+  const expired = subJson.expired;
+  hasAccess = subscribed && !expired;
+
+
+  // 🟢 SUBSCRIBED
+  if (hasAccess) {
+    disableBuyButton();
+
+    const endDate = new Date(subJson.endDate).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+
+    infoBox.textContent = `✅ Access active until ${endDate}`;
+    infoBox.classList.add("active");
+  }
+
+  // 🔴 EXPIRED (future-ready)
+  if (subscribed && subJson.expired) {
+    infoBox.textContent = "⚠️ Your access has expired. Renew to continue.";
+    infoBox.classList.add("inactive");
+  }
+
+} 
+// 🟡 LOGGED IN BUT NOT SUBSCRIBED
+if (!subscribed) {
+  infoBox.textContent = "⏳ Access valid for 6 months from date of purchase";
+  infoBox.className = "subscription-info inactive";
+
+  buyBtn.disabled = false;
+  buyBtn.textContent = "Buy Now";
+}
+
+
+
     }
 
     // ✅ Disable Buy button if already subscribed
-if (subscribed) {
-  disableBuyButton();
+if (!hasAccess) {
+  buyBtn.disabled = false;
+  buyBtn.textContent = subscribed ? "Renew Access" : "Buy Now";
 }
+
 
     // 2️⃣ Fetch notes
     console.log("CourseId from URL1:", courseId);
@@ -120,7 +187,7 @@ if (subscribed) {
 
     // 3️⃣ Render notes
     for (const note of notes) {
-  const locked = !subscribed;
+  const locked = !hasAccess;
 
   const imgPath = note.previewImage.startsWith("/DOC")
     ? note.previewImage.replace("/DOC", "")
@@ -149,11 +216,12 @@ if (subscribed) {
     // 4️⃣ Button handling
       document.querySelectorAll(".note-left").forEach(noteEl => {
     noteEl.addEventListener("click", () => {
-      if (!subscribed) {
-        document.getElementById("buy-btn")
-          .scrollIntoView({ behavior: "smooth" });
-        return;
-      }
+      if (!hasAccess) {
+  document.getElementById("buy-btn")
+    .scrollIntoView({ behavior: "smooth" });
+  return;
+}
+
 
       const noteId = noteEl.dataset.noteId;
 
