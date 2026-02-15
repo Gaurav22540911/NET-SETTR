@@ -292,10 +292,12 @@ debugger;
       order_id: order.orderId,
       name: "NET-SETTR",
       description: courseName,
-     // image: "logo.png",
+      image: "http://localhost:8080/logo.png",
       prefill: {
-  contact: localStorage.getItem("userLogin") || ""
+  contact: localStorage.getItem("userPhone") || "",
+  email: localStorage.getItem("userEmail") || ""
 },
+remember_customer: false,
 
 
       handler: async function (paymentResponse) {
@@ -324,7 +326,7 @@ debugger;
         }
       },
 
-      theme: { color: "#1f2937" }
+      theme: { color: "#5b077f" }
     };
 
     new Razorpay(options).open();

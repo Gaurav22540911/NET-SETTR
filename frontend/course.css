@@ -62,19 +62,19 @@ body {
 
 /* SIGN UP BUTTON — Dark */
 .signup-btn {
-  background: linear-gradient(135deg, #69489b, #8000FF);
-  color: #8000FF;
+  background: #FFFFFF;
+  color: #8000FF !important;
   border: 2px solid #FFFFFF;
   font-weight: 700;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(255,255,255,0.3);
+  border-radius: 10px;
+
+  box-shadow: 0 0 6px rgba(255,255,255,0.5);
 }
 
 .signup-btn:hover {
-  background: #FFFFFF;
+  background: #f3e6ff;
   color: #8000FF;
-  box-shadow: 0 0 15px rgba(255,255,255,0.6),
-              0 0 10px rgba(128,0,255,0.6);
+  transform: translateY(-2px);
 }
 
 
@@ -488,6 +488,6 @@ body {
 }
 
 .subscription-info.inactive {
-  color: #6b7280; /* gray */
+  color: #065f46;
 }
 
